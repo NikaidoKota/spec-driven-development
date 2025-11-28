@@ -405,47 +405,443 @@ this.hp -= damage;
 // NOTE: この処理は60FPSを前提としている
 ```
 
-## テスト規約
+## テスト駆動開発（TDD）規約
 
-### ユニットテスト（将来実装）
+このプロジェクトでは、すべての実装にテスト駆動開発（TDD）を採用します。
 
-#### テストファイルの配置
+### TDDの基本原則
+
+#### Red-Green-Refactorサイクル
+すべてのコードは以下のサイクルで開発します：
+
+1. **🔴 Red（失敗するテストを書く）**
+   ```typescript
+   // 例: Vector2クラスのaddメソッドのテスト（実装前）
+   describe('Vector2', () => {
+     describe('add', () => {
+       it('2つのベクトルを正しく加算する', () => {
+         const v1 = new Vector2(1, 2);
+         const v2 = new Vector2(3, 4);
+         const result = v1.add(v2);
+
+         expect(result.x).toBe(4);
+         expect(result.y).toBe(6);
+       });
+     });
+   });
+   // この時点でテストは失敗する（addメソッドが未実装のため）
+   ```
+
+2. **🟢 Green（テストを通す最小限のコードを書く）**
+   ```typescript
+   // 例: テストを通すための最小実装
+   class Vector2 {
+     constructor(public x: number, public y: number) {}
+
+     add(other: Vector2): Vector2 {
+       return new Vector2(this.x + other.x, this.y + other.y);
+     }
+   }
+   // テストが成功する
+   ```
+
+3. **🔵 Refactor（リファクタリング）**
+   ```typescript
+   // 例: コードの品質を向上（パフォーマンス、可読性など）
+   class Vector2 {
+     constructor(public x: number, public y: number) {}
+
+     add(other: Vector2): Vector2 {
+       // 将来的にオブジェクトプールを使う可能性を考慮
+       return new Vector2(this.x + other.x, this.y + other.y);
+     }
+
+     // 他の演算も追加
+     subtract(other: Vector2): Vector2 {
+       return new Vector2(this.x - other.x, this.y - other.y);
+     }
+   }
+   // テストが引き続き成功することを確認
+   ```
+
+#### TDD実践のポイント
+- **テストファースト**: 実装コードを書く前に必ずテストを書く
+- **小さいステップ**: 一度に1つの機能のみをテストし実装
+- **継続的な実行**: コード変更のたびにテストを実行
+- **テストの独立性**: 各テストは他のテストに依存しない
+- **明確な失敗**: テストが失敗した理由が明確にわかるようにする
+
+### テストの種類と適用範囲
+
+#### ユニットテスト（必須）
+**対象**: 個別の関数、クラス、メソッド
+**ツール**: Vitest
+**カバレッジ目標**: 80%以上
+**実施タイミング**: すべての実装に対して
+
+##### テストファイルの配置
 ```
 src/utils/Vector2.ts
 tests/unit/utils/Vector2.test.ts
+
+src/entities/Player.ts
+tests/unit/entities/Player.test.ts
+
+src/systems/CollisionSystem.ts
+tests/unit/systems/CollisionSystem.test.ts
 ```
 
-#### テストの構造
+##### テストの構造（AAA パターン）
 ```typescript
-describe('Vector2', () => {
-  describe('add', () => {
-    it('should add two vectors correctly', () => {
-      const v1 = new Vector2(1, 2);
-      const v2 = new Vector2(3, 4);
-      const result = v1.add(v2);
+describe('Player', () => {
+  describe('takeDamage', () => {
+    it('ダメージを受けるとHPが減少する', () => {
+      // Arrange: テストの準備
+      const player = new Player({ x: 0, y: 0 });
+      const initialHp = player.getHp();
+      const damage = 10;
 
-      expect(result.x).toBe(4);
-      expect(result.y).toBe(6);
+      // Act: テスト対象の実行
+      player.takeDamage(damage);
+
+      // Assert: 結果の検証
+      expect(player.getHp()).toBe(initialHp - damage);
     });
 
-    it('should handle negative values', () => {
-      const v1 = new Vector2(-1, -2);
-      const v2 = new Vector2(3, 4);
-      const result = v1.add(v2);
+    it('HPが0未満にならない', () => {
+      // Arrange
+      const player = new Player({ x: 0, y: 0 });
+      player.setHp(5);
 
-      expect(result.x).toBe(2);
-      expect(result.y).toBe(2);
+      // Act
+      player.takeDamage(10);
+
+      // Assert
+      expect(player.getHp()).toBe(0);
+    });
+
+    it('ダメージを受けると死亡フラグが立つ', () => {
+      // Arrange
+      const player = new Player({ x: 0, y: 0 });
+      player.setHp(5);
+
+      // Act
+      player.takeDamage(5);
+
+      // Assert
+      expect(player.isAlive()).toBe(false);
     });
   });
 });
 ```
 
-### テストすべき項目
-- ✅ ユーティリティ関数（Vector2, MathUtilsなど）
-- ✅ ゲームロジック（レベル計算、ダメージ計算など）
-- ✅ システムクラス（CollisionSystem, SpawnSystemなど）
-- ⚠️ UIコンポーネント（必要に応じて）
-- ❌ レンダリング処理（テスト困難）
+##### テストすべき項目
+- ✅ **ユーティリティ関数**: Vector2, MathUtils, Randomなど
+- ✅ **ゲームロジック**: レベル計算、ダメージ計算、スコア計算など
+- ✅ **エンティティクラス**: Player, Enemy, Weaponなど
+- ✅ **システムクラス**: CollisionSystem, LevelSystem, SpawnSystemなど
+- ✅ **コンポーネント**: MovementComponent, CombatComponentなど
+- ⚠️ **UIコンポーネント**: 複雑なロジックがある場合のみ
+- ❌ **レンダリング処理**: テスト困難（視覚的テストは手動）
+
+##### エッジケースのテスト
+```typescript
+describe('CollisionSystem', () => {
+  describe('checkCircleCollision', () => {
+    it('2つの円が重なっている場合true', () => {
+      const a = { position: new Vector2(0, 0), radius: 10 };
+      const b = { position: new Vector2(5, 0), radius: 10 };
+      expect(CollisionSystem.checkCircleCollision(a, b)).toBe(true);
+    });
+
+    it('2つの円が接触している場合true', () => {
+      const a = { position: new Vector2(0, 0), radius: 10 };
+      const b = { position: new Vector2(20, 0), radius: 10 };
+      expect(CollisionSystem.checkCircleCollision(a, b)).toBe(true);
+    });
+
+    it('2つの円が離れている場合false', () => {
+      const a = { position: new Vector2(0, 0), radius: 10 };
+      const b = { position: new Vector2(25, 0), radius: 10 };
+      expect(CollisionSystem.checkCircleCollision(a, b)).toBe(false);
+    });
+
+    it('半径が0の場合も正しく動作', () => {
+      const a = { position: new Vector2(0, 0), radius: 0 };
+      const b = { position: new Vector2(0, 0), radius: 10 };
+      expect(CollisionSystem.checkCircleCollision(a, b)).toBe(true);
+    });
+  });
+});
+```
+
+##### モックの使用
+```typescript
+describe('LevelSystem', () => {
+  describe('levelUp', () => {
+    it('レベルアップ時にUIを更新する', () => {
+      // Arrange: UIのモック
+      const mockUI = {
+        showLevelUpOptions: vi.fn(),
+      };
+      const levelSystem = new LevelSystem(mockUI);
+      const player = new Player({ x: 0, y: 0 });
+
+      // Act
+      levelSystem.levelUp(player);
+
+      // Assert: UIメソッドが呼ばれたことを確認
+      expect(mockUI.showLevelUpOptions).toHaveBeenCalledTimes(1);
+      expect(mockUI.showLevelUpOptions).toHaveBeenCalledWith(player);
+    });
+  });
+});
+```
+
+#### 統合テスト（推奨）
+**対象**: 複数のモジュールの連携
+**ツール**: Vitest
+**実施タイミング**: モジュール間の連携実装時
+
+##### 統合テストの例
+```typescript
+describe('ゲームループ統合テスト', () => {
+  it('プレイヤーが敵と衝突するとダメージを受ける', () => {
+    // Arrange: ゲームシステムの初期化
+    const game = new Game();
+    const player = game.getPlayer();
+    const enemy = game.spawnEnemy(player.position.x + 5, player.position.y);
+    const initialHp = player.getHp();
+
+    // Act: 1フレーム更新
+    game.update(0.016); // 16ms
+
+    // Assert: プレイヤーがダメージを受けたことを確認
+    expect(player.getHp()).toBeLessThan(initialHp);
+  });
+
+  it('武器が敵を倒すと経験値を獲得する', () => {
+    // Arrange
+    const game = new Game();
+    const player = game.getPlayer();
+    const enemy = game.spawnEnemy(player.position.x + 10, player.position.y);
+    const initialExp = player.getExperience();
+    enemy.setHp(1); // 1発で倒せるHP
+
+    // Act: 敵を倒すまで更新
+    for (let i = 0; i < 60; i++) { // 1秒分
+      game.update(0.016);
+      if (!enemy.isAlive()) break;
+    }
+
+    // Assert: 経験値が増えたことを確認
+    expect(player.getExperience()).toBeGreaterThan(initialExp);
+  });
+});
+```
+
+#### E2Eテスト（Phase 2以降）
+**対象**: システム全体の動作
+**ツール**: Playwright
+**実施タイミング**: 主要機能完成時
+
+##### E2Eテストの例（将来実装）
+```typescript
+test('ゲームの基本フローが動作する', async ({ page }) => {
+  // ゲーム起動
+  await page.goto('http://localhost:5173');
+
+  // タイトル画面でスタートボタンをクリック
+  await page.click('button:has-text("Start Game")');
+
+  // ゲーム画面が表示されることを確認
+  await expect(page.locator('#game-canvas')).toBeVisible();
+
+  // プレイヤーのHPが表示されることを確認
+  await expect(page.locator('.player-hp')).toBeVisible();
+
+  // 5秒間プレイ
+  await page.waitForTimeout(5000);
+
+  // スコアが増えていることを確認
+  const score = await page.locator('.score').textContent();
+  expect(parseInt(score)).toBeGreaterThan(0);
+});
+```
+
+### テスト命名規則
+
+#### describeブロック
+```typescript
+// ✅ Good: クラス名/関数名を明記
+describe('Vector2', () => {
+  describe('add', () => {
+    // テスト
+  });
+});
+
+describe('Player', () => {
+  describe('takeDamage', () => {
+    // テスト
+  });
+});
+
+// ❌ Bad: 不明確
+describe('utils', () => {
+  // テスト
+});
+```
+
+#### itブロック
+```typescript
+// ✅ Good: 日本語で明確に
+it('2つのベクトルを正しく加算する', () => {});
+it('HPが0未満にならない', () => {});
+it('経験値が満タンになるとレベルアップする', () => {});
+
+// ✅ Good: 英語の場合は "should" で始める
+it('should add two vectors correctly', () => {});
+it('should not allow HP to go below zero', () => {});
+
+// ❌ Bad: 動作が不明確
+it('テスト1', () => {});
+it('works', () => {});
+```
+
+### テストカバレッジ
+
+#### カバレッジ目標
+- **ユニットテスト**: 80%以上
+- **統合テスト**: 主要な連携フローをカバー
+- **E2Eテスト**: 重要なユーザーシナリオをカバー
+
+#### カバレッジ測定
+```bash
+# カバレッジ測定
+npm run test:coverage
+
+# カバレッジレポート確認
+open coverage/index.html
+```
+
+#### カバレッジ対象外
+以下は低いカバレッジでも許容：
+- レンダリングコード（canvas描画）
+- エントリーポイント（main.ts）
+- 設定ファイル
+- 型定義のみのファイル
+
+### テスト実行
+
+#### 開発中のテスト実行
+```bash
+# ウォッチモード（推奨）
+npm run test:watch
+
+# 1回だけ実行
+npm run test
+
+# 特定のファイルのみ
+npm run test Vector2.test.ts
+```
+
+#### CI/CDでのテスト実行
+```bash
+# すべてのテストを実行
+npm run test:ci
+
+# カバレッジチェック付き
+npm run test:coverage
+```
+
+### テストデータとフィクスチャ
+
+#### テストデータの管理
+```typescript
+// tests/fixtures/playerData.ts
+export const testPlayerData = {
+  default: {
+    position: { x: 0, y: 0 },
+    hp: 100,
+    maxHp: 100,
+    level: 1,
+  },
+  lowHp: {
+    position: { x: 0, y: 0 },
+    hp: 10,
+    maxHp: 100,
+    level: 1,
+  },
+  highLevel: {
+    position: { x: 0, y: 0 },
+    hp: 200,
+    maxHp: 200,
+    level: 10,
+  },
+};
+
+// テストでの使用
+import { testPlayerData } from '../fixtures/playerData';
+
+it('プレイヤーが生成される', () => {
+  const player = new Player(testPlayerData.default);
+  expect(player.getHp()).toBe(100);
+});
+```
+
+### テストのベストプラクティス
+
+#### ✅ Do（推奨）
+- テストは独立して実行可能にする
+- テストは決定的（毎回同じ結果）にする
+- テストは高速に実行できるようにする
+- テストは明確で読みやすくする
+- テストは実装の詳細ではなく動作をテストする
+
+#### ❌ Don't（非推奨）
+- テスト間で状態を共有しない
+- 実装の詳細に依存したテストを書かない
+- 複雑すぎるテストを書かない
+- テストのためだけにコードを変更しない（テスタビリティは除く）
+- すべてをモックにしない（実際のコードを使うべき場所もある）
+
+### トラブルシューティング
+
+#### テストが不安定（フラッキー）な場合
+```typescript
+// ❌ Bad: タイミングに依存
+it('アニメーションが完了する', async () => {
+  animation.start();
+  await wait(100); // 100msで完了すると仮定
+  expect(animation.isComplete()).toBe(true);
+});
+
+// ✅ Good: 完了を待つ
+it('アニメーションが完了する', async () => {
+  animation.start();
+  await animation.waitForCompletion();
+  expect(animation.isComplete()).toBe(true);
+});
+```
+
+#### テストが遅い場合
+```typescript
+// ❌ Bad: 実際のタイマーを使う
+it('3秒後にスポーンする', async () => {
+  spawner.start();
+  await wait(3000);
+  expect(spawner.hasSpawned()).toBe(true);
+});
+
+// ✅ Good: タイマーをモック
+it('3秒後にスポーンする', async () => {
+  vi.useFakeTimers();
+  spawner.start();
+  vi.advanceTimersByTime(3000);
+  expect(spawner.hasSpawned()).toBe(true);
+  vi.useRealTimers();
+});
+```
 
 ## コードレビュー基準
 
