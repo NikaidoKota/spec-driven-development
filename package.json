@@ -1,0 +1,47 @@
+{
+  "name": "elemental-survivors",
+  "version": "0.1.0",
+  "description": "ヴァンパイアサバイバーズに触発された、環境インタラクションと属性システムが特徴のブラウザベース2Dアクションゲーム。",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "test:ci": "vitest run",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "format": "prettier --write \"src/**/*.ts\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NikaidoKota/spec-driven-development.git"
+  },
+  "keywords": [
+    "game",
+    "browser-game",
+    "vampire-survivors",
+    "canvas"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/NikaidoKota/spec-driven-development/issues"
+  },
+  "homepage": "https://github.com/NikaidoKota/spec-driven-development#readme",
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@typescript-eslint/eslint-plugin": "^8.48.0",
+    "@typescript-eslint/parser": "^8.48.0",
+    "@vitest/ui": "^4.0.14",
+    "eslint": "^9.39.1",
+    "jsdom": "^27.2.0",
+    "prettier": "^3.7.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.2.4",
+    "vitest": "^4.0.14"
+  }
+}
