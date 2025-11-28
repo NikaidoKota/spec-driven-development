@@ -18,6 +18,11 @@ export default defineConfig({
   server: {
     host: true, // AWS Cloud9などのクラウド環境でのアクセスを許可
     strictPort: false,
+    allowedHosts: [
+      '.amazonaws.com',
+      '.cloudfront.net',
+      'd16u17p1vt11h5.cloudfront.net',
+    ],
   },
   test: {
     globals: true,
