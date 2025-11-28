@@ -1,3 +1,4 @@
+import './styles/main.css';
 import { Game } from '@core/Game';
 import { Logger } from '@utils/Logger';
 import { GameConfig } from '@config/GameConfig';

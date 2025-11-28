@@ -16,13 +16,19 @@ export default defineConfig({
     },
   },
   server: {
-    host: true, // AWS Cloud9などのクラウド環境でのアクセスを許可
+    host: '0.0.0.0', // AWS Cloud9などのクラウド環境でのアクセスを許可
+    port: 8080, // Cloud9で公開されているポート
     strictPort: false,
     allowedHosts: [
       '.amazonaws.com',
       '.cloudfront.net',
       'd16u17p1vt11h5.cloudfront.net',
     ],
+    hmr: {
+      protocol: 'wss',
+      host: 'd16u17p1vt11h5.cloudfront.net',
+      clientPort: 443, // CloudFrontはHTTPSポート443を使用
+    },
   },
   test: {
     globals: true,

@@ -38,6 +38,11 @@ logs/
 coverage/
 .nyc_output/
 
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+
 # Misc
 .cache/
 *.bak
@@ -45,3 +50,4 @@ coverage/
 
 # Project specific
 spec-driven-development/
+test.html
