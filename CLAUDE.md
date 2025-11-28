@@ -1,363 +1,322 @@
-# 開発ルール・ガイドライン
+# CLAUDE.md
 
-## 概要
-このドキュメントは、Claude Codeを使用した開発プロジェクトにおける標準的な開発フローとルールを定義します。
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## プロジェクト構造
+## Project Overview
 
-リポジトリは`docs/`ディレクトリ配下で2つのカテゴリのドキュメントを管理します：
+**Elemental Survivors** is a browser-based 2D action game inspired by Vampire Survivors, featuring environmental interaction and elemental fusion systems. Built with TypeScript, Vite, and HTML5 Canvas 2D API.
 
-```
-docs/
-├── persistent/              # 永続的ドキュメント
-│   ├── product-requirements.md
-│   ├── functional-design.md
-│   ├── architecture.md
-│   ├── repository-structure.md
-│   ├── development-guidelines.md
-│   └── glossary.md
-├── steering/                # 作業単位ドキュメント
-│   ├── 20251128-initial-setup/
-│   │   ├── requirements.md
-│   │   ├── design.md
-│   │   └── tasklist.md
-│   └── 20251201-feature-name/
-│       ├── requirements.md
-│       ├── design.md
-│       └── tasklist.md
-└── images/                  # 図表用の画像
-```
+**Current Status**: Phase 1 (Core Engine) - Basic game loop with player movement implemented using Test-Driven Development (TDD).
 
-### 永続的ドキュメント（docs/persistent/）
-プロジェクトの基礎となる仕様を含む、めったに変更されないドキュメント：
+## Development Commands
 
-- **product-requirements.md** - 製品ビジョン、ターゲットユーザー、機能、成功基準
-- **functional-design.md** - アーキテクチャ、システム図、データモデル、コンポーネント、UI フロー
-- **architecture.md** - 技術スタック、ツール、技術的制約、パフォーマンス要件
-- **repository-structure.md** - フォルダ構成とファイル配置ルール
-- **development-guidelines.md** - コーディング規約、命名規則、テスト慣行
-- **glossary.md** - ドメイン用語とユビキタス言語の定義
+```bash
+# Development
+npm run dev              # Start dev server (http://localhost:5173)
+npm run build            # Production build
+npm run preview          # Preview production build
 
-### 作業単位ドキュメント（docs/steering/[YYYYMMDD]-[title]/）
-特定の開発タスクのための一時的なステアリングファイル：
+# Testing (TDD approach - ALWAYS test first)
+npm run test             # Run tests in watch mode
+npm run test:watch       # Run tests in watch mode (explicit)
+npm run test:ui          # Run tests with UI
+npm run test:ci          # Run tests once (CI mode)
+npm run test:coverage    # Run tests with coverage report
+npm test Vector2         # Run specific test file
 
-- **requirements.md** - 機能変更と受入基準
-- **design.md** - 実装アプローチと影響を受けるコンポーネント
-- **tasklist.md** - 具体的なタスクと完了条件
-
-## 開発プロセス
-
-### 初期セットアップ手順
-1. `docs/persistent/`、`docs/steering/`、`docs/images/` ディレクトリを作成
-2. 永続的ドキュメントを順次作成し、各ファイル作成後に承認を取得
-   - `docs/persistent/product-requirements.md`
-   - `docs/persistent/functional-design.md`
-   - `docs/persistent/architecture.md`
-   - `docs/persistent/repository-structure.md`
-   - `docs/persistent/development-guidelines.md`
-   - `docs/persistent/glossary.md`
-3. 最初の実装用ステアリングディレクトリを作成（例：`docs/steering/20251128-initial-setup/`）
-4. ステアリングドキュメントを作成し、各ファイル作成後に承認を取得
-   - `docs/steering/[日付]-[タイトル]/requirements.md`
-   - `docs/steering/[日付]-[タイトル]/design.md`
-   - `docs/steering/[日付]-[タイトル]/tasklist.md`
-5. 環境をセットアップ
-6. タスクリストに従って開発を開始
-7. 品質チェックを実施
-
-### 機能追加・修正手順
-1. 既存ドキュメントへの影響を分析
-2. 日付付きステアリングディレクトリを作成（例：`docs/steering/20251128-user-auth/`）
-3. 段階的承認を得ながら作業単位ドキュメントを生成
-   - `docs/steering/[日付]-[タイトル]/requirements.md`
-   - `docs/steering/[日付]-[タイトル]/design.md`
-   - `docs/steering/[日付]-[タイトル]/tasklist.md`
-4. 設計が根本的に変わる場合は `docs/persistent/` 内のドキュメントを更新
-5. タスクリストに従って実装
-6. 品質保証を実行
-
-### ドキュメント作成の原則
-
-**永続的ドキュメント**は、プロジェクトの「北極星」として安定したアンカーとして機能し、大きなアーキテクチャの変更時のみ更新されます。
-
-**ステアリングドキュメント**は、特定の作業の意図を捉え、履歴記録として保持されますが、新しいタスクには引き継がれません。
-
-## レビュー・承認プロセス
-
-### 必須承認ポイント
-以下のタイミングで必ずユーザーレビューと承認を取得：
-
-#### 初期セットアップ時
-1. ✅ `docs/persistent/product-requirements.md` 完成時
-2. ✅ `docs/persistent/functional-design.md` 完成時
-3. ✅ `docs/persistent/architecture.md` 完成時
-4. ✅ `docs/persistent/repository-structure.md` 完成時
-5. ✅ `docs/persistent/development-guidelines.md` 完成時
-6. ✅ `docs/persistent/glossary.md` 完成時
-7. ✅ `docs/steering/[日付]-[タイトル]/requirements.md` 完成時
-8. ✅ `docs/steering/[日付]-[タイトル]/design.md` 完成時
-9. ✅ `docs/steering/[日付]-[タイトル]/tasklist.md` 完成時
-
-#### 機能追加・修正時
-1. ✅ 新しいステアリングディレクトリの `requirements.md` 完成時
-2. ✅ 新しいステアリングディレクトリの `design.md` 完成時
-3. ✅ 新しいステアリングディレクトリの `tasklist.md` 完成時
-4. ✅ 各主要機能の実装完了時
-5. ✅ 品質チェック完了時
-
-### レビュー時の確認事項
-- 要件を満たしているか
-- 設計通りに実装されているか
-- コードの品質（可読性、保守性）
-- セキュリティ上の問題はないか
-- パフォーマンスは許容範囲か
-- ドキュメント間の整合性が取れているか
-
-## 実装の原則
-
-### 段階的開発
-設計書に基づき、以下の原則で段階的に開発を進めます：
-
-1. **小さな単位で実装**: 1つの機能またはモジュール単位で実装
-2. **動作確認**: 各実装後、必ず動作確認を実施
-3. **コミット**: 動作確認後、適切な単位でコミット
-4. **進捗報告**: 各段階の完了時にユーザーへ報告
-
-### 実装順序
-`tasklist.md` で定義した順序に従い実装を進めます：
-
-1. **基盤層**: ディレクトリ構造、設定ファイル、共通モジュール
-2. **データ層**: データモデル、データベース接続
-3. **ビジネスロジック層**: コアとなる機能実装
-4. **プレゼンテーション層**: UI、API実装
-5. **統合・調整**: 各層の統合とエラーハンドリング
-
-### コーディング規約
-`docs/persistent/development-guidelines.md` に従います。主なポイント：
-
-- **命名規則**: プロジェクトの言語・フレームワークの標準に従う
-- **コメント**: 複雑なロジックには必ずコメントを追加
-- **エラーハンドリング**: 適切な例外処理とエラーメッセージ
-- **セキュリティ**: OWASP Top 10の脆弱性に注意
-  - SQL Injection対策
-  - XSS対策
-  - CSRF対策
-  - コマンドインジェクション対策
-- **シンプルさの維持**: 過度な抽象化や将来の拡張を想定した実装を避ける
-
-### テスト駆動開発（TDD）
-このプロジェクトはテスト駆動開発を採用します。
-
-#### TDDサイクル（Red-Green-Refactor）
-すべての実装は以下のサイクルで行います：
-
-1. **🔴 Red（失敗するテストを書く）**
-   - 実装前にテストを書く
-   - テストは失敗することを確認
-   - テストケース名は仕様を明確に表現
-
-2. **🟢 Green（テストを通す最小限のコードを書く）**
-   - テストを通すための最小限の実装
-   - 完璧さよりも動作を優先
-   - テストがすべて成功することを確認
-
-3. **🔵 Refactor（リファクタリング）**
-   - コードの品質を向上
-   - 重複を排除
-   - テストが引き続き成功することを確認
-
-#### TDD原則
-- **テストファースト**: 実装コードの前に必ずテストを書く
-- **小さいステップ**: 一度に1つの機能のみをテスト
-- **継続的な実行**: コード変更のたびにテストを実行
-- **テストの独立性**: 各テストは他のテストに依存しない
-
-#### テストの種類と適用範囲
-
-##### ユニットテスト（必須）
-- **対象**: 個別の関数、クラス、メソッド
-- **ツール**: Vitest
-- **カバレッジ目標**: 80%以上
-- **実施タイミング**: すべての実装に対して
-- **例**:
-  - ユーティリティ関数（Vector2, MathUtils）
-  - ゲームロジック（レベル計算、ダメージ計算）
-  - システムクラス（CollisionSystem, LevelSystem）
-
-##### 統合テスト（推奨）
-- **対象**: 複数のモジュールの連携
-- **ツール**: Vitest
-- **実施タイミング**: モジュール間の連携実装時
-- **例**:
-  - プレイヤーと敵の衝突判定
-  - 武器と敵のダメージ処理
-  - レベルアップとUI連携
-
-##### E2Eテスト（Phase 2以降）
-- **対象**: システム全体の動作
-- **ツール**: Playwright
-- **実施タイミング**: 主要機能完成時
-- **例**:
-  - ゲーム開始からゲームオーバーまでの流れ
-  - レベルアップ選択の一連の操作
-
-#### テスト実装ガイドライン
-
-##### テストファイル配置
-```
-src/utils/Vector2.ts
-tests/unit/utils/Vector2.test.ts
+# Code Quality
+npm run lint             # Lint TypeScript files
+npm run lint:fix         # Auto-fix linting issues
+npm run format           # Format code with Prettier
 ```
 
-##### テスト命名規則
+## Architecture Overview
+
+### Tech Stack
+- **Language**: TypeScript 5.x (strict mode enabled)
+- **Build Tool**: Vite 7.x (fast HMR, ES modules)
+- **Testing**: Vitest 4.x with jsdom (TDD required, 80%+ coverage goal)
+- **Rendering**: HTML5 Canvas 2D API (no external game engine)
+- **Module System**: ES Modules with path aliases
+
+### Core Patterns
+
+**Game Loop Pattern**
+- Uses `requestAnimationFrame` for 60 FPS target
+- Delta time calculation for frame-independent movement
+- Update → Render cycle separation
+
+**Entity Component System (Simplified)**
+- Entities: Game objects with position and state
+- Systems: Process entities (Collision, Spawn, Level, Combat)
+- Components: Data containers (Position, Health, Combat)
+
+**Scene Management**
+- Scene interface: `init()`, `update(deltaTime)`, `render()`, `cleanup()`
+- SceneManager handles transitions
+- Current scenes: Title, Game, GameOver
+
+**Object Pooling** (for performance)
+- Reuse objects instead of creating/destroying
+- Used for: enemies, projectiles, effects, experience orbs
+
+### Directory Structure & Path Aliases
+
+```
+src/
+├── core/           # @core    - Game engine (Game, Renderer, Input, Scene)
+├── entities/       # @entities - Game objects (Player, Enemy, Weapon)
+│   ├── enemies/    # Enemy types
+│   └── weapons/    # Weapon types
+├── systems/        # @systems  - Game logic (Collision, Spawn, Level, Combat)
+├── scenes/         # @scenes   - Screen states (Title, Game, GameOver)
+├── ui/             # @ui       - UI components (HUD, LevelUpPanel)
+├── utils/          # @utils    - Helpers (Vector2, MathUtils, Logger)
+├── config/         # @config   - Game constants and balance settings
+├── types/          # @types    - TypeScript interfaces and types
+└── main.ts         # Entry point
+```
+
+**Key Classes** (Phase 1 implemented):
+- `Game.ts` - Main game class, manages game loop and FPS
+- `Renderer.ts` - Canvas drawing (circles, rects, text, health bars)
+- `Input.ts` - Keyboard/mouse handling (WASD/arrows for movement)
+- `Vector2.ts` - 2D vector math (add, subtract, multiply, normalize, distance)
+- `MathUtils.ts` - Math utilities (clamp, lerp, randomRange, randomInt, deg/rad conversion)
+
+## Test-Driven Development (TDD) - MANDATORY
+
+**This project strictly follows TDD.** All implementation MUST follow the Red-Green-Refactor cycle:
+
+### TDD Cycle
+1. **🔴 Red**: Write failing test FIRST (before any implementation)
+2. **🟢 Green**: Write minimal code to pass the test
+3. **🔵 Refactor**: Improve code quality while keeping tests green
+
+### Test Structure (AAA Pattern)
 ```typescript
-describe('Vector2', () => {
-  describe('add', () => {
-    it('2つのベクトルを正しく加算する', () => {
-      // テスト内容
-    });
+describe('ClassName', () => {
+  describe('methodName', () => {
+    it('説明文（日本語OK）', () => {
+      // Arrange: Setup test data
+      const input = new SomeClass();
 
-    it('負の値を持つベクトルを正しく加算する', () => {
-      // テスト内容
+      // Act: Execute test target
+      const result = input.someMethod();
+
+      // Assert: Verify results
+      expect(result).toBe(expectedValue);
     });
   });
 });
 ```
 
-##### テストの構造（AAA パターン）
+### Test File Placement
+```
+src/utils/Vector2.ts
+tests/unit/utils/Vector2.test.ts
+```
+
+### Coverage Goals
+- **Unit Tests**: 80%+ (mandatory for utils, systems, entities)
+- **Integration Tests**: Key workflows (player-enemy collision, damage calculation)
+- **E2E Tests**: Phase 2+ (Playwright for full game flow)
+
+**DO NOT** implement production code without tests first. This is enforced.
+
+## Code Architecture Details
+
+### Game Loop Flow
+```
+requestAnimationFrame
+  → Calculate deltaTime
+  → Input.getMovementDirection()
+  → Update game state (entities move)
+  → Collision detection
+  → Renderer.clear()
+  → Renderer.draw*() methods
+  → Loop
+```
+
+### Configuration System
+All game balance parameters are in `src/config/`:
+- `GameConfig.ts` - Canvas size (1280x720), FPS target (60), game duration (600s)
+- `PlayerConfig.ts` - Initial HP (100), speed (200), level (1)
+- `EnemyConfig.ts` - Enemy stats, spawn intervals, max count (100)
+- `WeaponConfig.ts` - Weapon stats and level-up bonuses
+- `BalanceConfig.ts` - Experience orbs, difficulty scaling
+
+These are `const` objects for easy balance tweaking without code changes.
+
+### Canvas Rendering
+`Renderer.ts` wraps Canvas 2D API:
+- `clear(color)` - Fill background
+- `drawCircle(position, radius, color)` - Entities
+- `drawRect(position, width, height, color)` - UI elements
+- `drawText(text, position, color, fontSize, fontFamily, align)` - Text
+- `drawHealthBar(position, width, height, currentHp, maxHp, bgColor, fillColor)` - HP bars
+
+All rendering goes through Renderer (no direct canvas access elsewhere).
+
+### Input Handling
+`Input.ts` manages keyboard/mouse:
+- `isKeyPressed(key)` - Check if key is down
+- `getMovementDirection()` - Returns normalized Vector2 for WASD/arrows
+- `getMousePosition()` - Current mouse position
+- `isMousePressed()` - Mouse button state
+
+Handles focus loss (clears keys on window blur).
+
+### Vector Math
+`Vector2.ts` is the foundation for all positions/velocities:
+- Immutable operations (returns new instances)
+- Key methods: `add()`, `subtract()`, `multiply()`, `length()`, `normalize()`
+- Static helpers: `Vector2.distance()`, `Vector2.zero()`
+
+## Development Guidelines
+
+### Coding Standards
+- **TypeScript strict mode** - No `any`, explicit return types for functions
+- **Naming**: PascalCase (classes), camelCase (variables/functions), UPPER_SNAKE_CASE (constants)
+- **File naming**: PascalCase for classes (`Player.ts`), kebab-case for assets (`player-sprite.png`)
+- **No console.log** - Use `Logger.info/warn/error()` instead
+- **Comments**: JSDoc for public APIs, inline for complex logic only
+
+### When to Use TDD
+- **ALWAYS** for: utils, systems, game logic, entities
+- **Optional** for: rendering code (visual testing is manual), UI layout
+
+### Import Order
+1. External libraries
+2. Core engine (`@core`)
+3. Systems (`@systems`)
+4. Entities (`@entities`)
+5. UI (`@ui`)
+6. Utils (`@utils`)
+7. Types (`@types`)
+8. Config (`@config`)
+9. Relative imports
+
+### Performance Considerations
+- Target: 60 FPS (16.67ms per frame)
+- Max enemies on screen: 100
+- Use object pooling for frequently created/destroyed objects
+- Cull off-screen entities (don't render)
+- Avoid `new` in game loop hot paths
+
+## Document-Driven Development
+
+This project uses a two-tier documentation system:
+
+### Persistent Docs (`docs/persistent/`)
+Rarely-changing architectural documents:
+- `product-requirements.md` - Product vision, features, phases
+- `functional-design.md` - System architecture, data models
+- `architecture.md` - Tech stack, patterns, performance requirements
+- `repository-structure.md` - File organization rules
+- `development-guidelines.md` - Coding standards, naming conventions
+- `glossary.md` - Domain terminology
+
+**When to update**: Major architectural changes only.
+
+### Steering Docs (`docs/steering/YYYYMMDD-task-name/`)
+Task-specific implementation guides:
+- `requirements.md` - Feature requirements and acceptance criteria
+- `design.md` - Implementation approach, affected components
+- `tasklist.md` - Specific tasks and completion criteria
+
+**Current**: `docs/steering/20251128-prototype-implementation/` (Phase 1)
+
+**Important**: Always create steering docs BEFORE implementation. Get user approval for each doc.
+
+## Phase Development Plan
+
+### Phase 1: Prototype (CURRENT - Partially Complete)
+**Status**: Core engine done, next: Scenes → Player → Enemies → Weapons → Level System → UI
+- ✅ Utils (Vector2, MathUtils, Logger) with 43 passing tests
+- ✅ Core engine (Game loop, Renderer, Input)
+- 🔲 Scene management (Title, Game, GameOver)
+- 🔲 Player entity (HP, movement, Entity base class)
+- 🔲 Enemy spawning and AI
+- 🔲 Collision detection system
+- 🔲 Weapon system (auto-attack)
+- 🔲 Experience and level-up
+- 🔲 HUD and UI
+
+### Phase 2: Environmental Interaction (FUTURE)
+- Destructible objects (rocks, trees, barrels)
+- Terrain effects (water, lava, grass, ice)
+- Field transformation (grass burns, lava solidifies)
+
+### Phase 3: Elemental Fusion System (FUTURE)
+- 5 elements: Fire, Water, Thunder, Nature, Dark
+- Fusion effects (2-element combos: 15 types)
+- Trinity effects (3-element combos: 10 types)
+- Weapon attribute system
+
+### Phase 4: Polish (FUTURE)
+- Multiple characters, weapons, stages
+- Online leaderboard
+- Build sharing
+
+## Common Tasks
+
+### Adding a New Entity
+1. **Red**: Write test in `tests/unit/entities/EntityName.test.ts`
+2. **Green**: Implement in `src/entities/EntityName.ts` extending `Entity`
+3. **Refactor**: Clean up while tests pass
+4. Add config in `src/config/EntityConfig.ts`
+5. Update types in `src/types/entities.ts`
+
+### Adding a New System
+1. **Red**: Write tests for system logic
+2. **Green**: Implement in `src/systems/SystemName.ts`
+3. Integrate into `Game.update()` or appropriate scene
+4. Add to entity manager if needed
+
+### Debugging
+- Check browser console for Logger output
+- Use `GameConfig.DEBUG_MODE = true` for FPS display
+- Run `npm run test:ui` for interactive test debugging
+- Check `tests/unit/` for existing test examples
+
+## Important Reminders
+
+- **TDD is non-negotiable** - Test first, always
+- **Get approval** before moving to next phase/document
+- **Path aliases** - Use `@utils/Vector2` not `../utils/Vector2`
+- **No premature optimization** - Simple > clever until profiling shows issues
+- **Keep functions small** - Max 50 lines, single responsibility
+- **Document-driven** - Check steering docs for current task plan
+- **Commit frequently** - After each passing test or working feature
+
+## Known Patterns in Codebase
+
+**Immutable Vector Math**
 ```typescript
-it('説明', () => {
-  // Arrange: テストの準備
-  const vector1 = new Vector2(1, 2);
-  const vector2 = new Vector2(3, 4);
-
-  // Act: テスト対象の実行
-  const result = vector1.add(vector2);
-
-  // Assert: 結果の検証
-  expect(result.x).toBe(4);
-  expect(result.y).toBe(6);
-});
+const newPos = position.add(velocity.multiply(deltaTime));
+// position unchanged, returns new Vector2
 ```
 
-### テスト・検証
-各実装段階で以下のテストを実施：
-
-- **単体テスト**: 個別機能の動作確認（TDDサイクルで実装）
-- **結合テスト**: モジュール間の連携確認
-- **エンドツーエンドテスト**: システム全体の動作確認
-- **セキュリティテスト**: 脆弱性の確認
-- **パフォーマンステスト**: FPSとメモリ使用量の確認
-
-## 図表とビジュアル要素
-
-### 図表の作成と管理
-- **Mermaid記法を優先**: マークダウン内に埋め込み可能
-- **ASCII アート**: シンプルな図に使用可能
-- **画像ファイル**: 必要な場合は `docs/images/` ディレクトリに格納
-
-### 図表の更新
-- 対応する設計が変更された際は必ず図表も更新
-- コードとドキュメントの乖離を防止
-
-### Mermaid記法の例
-```mermaid
-graph TD
-    A[ユーザー] --> B[認証]
-    B --> C[ダッシュボード]
-    C --> D[機能A]
-    C --> E[機能B]
+**Config Constants**
+```typescript
+import { PlayerConfig } from '@config/PlayerConfig';
+const radius = PlayerConfig.RADIUS; // Type-safe, no magic numbers
 ```
 
-## Claude Code使用時の注意事項
+**Input-Driven Movement**
+```typescript
+const direction = this.input.getMovementDirection(); // Normalized vector
+this.position = this.position.add(direction.multiply(speed * deltaTime));
+```
 
-### タスク管理
-- 複雑なタスクは TodoWrite ツールで計画を立てる
-- 各タスクの進捗を随時報告
-- タスク完了時は速やかにステータス更新
-- `tasklist.md` の内容と連携させる
-
-### 質問・確認
-- 不明点や曖昧な点は AskUserQuestion ツールで確認
-- 重要な設計判断は必ずユーザーに確認
-- 複数の実装方法がある場合は選択肢を提示
-- ドキュメントに記載されていない内容は推測せず確認
-
-### ファイル操作
-- 既存ファイルの確認: 編集前に必ず Read ツールで内容を確認
-- 段階的な変更: 一度に大量の変更を避け、小さな単位で実施
-- バックアップ: 重要な変更前はGitコミットを推奨
-- ドキュメント構造を遵守: `docs/persistent/` と `docs/steering/` の役割を守る
-
-### ドキュメント整合性の維持
-- 永続的ドキュメントを更新する場合は、影響範囲を確認
-- ステアリングドキュメントは履歴として保持し、次のタスクに引き継がない
-- 図表とコードの乖離を防ぐため、変更時は両方を更新
-
-## トラブルシューティング
-
-### 問題発生時の対応
-1. エラーメッセージと状況を詳細に記録
-2. 原因を特定するため、関連ファイルを調査
-3. 修正方法を検討し、複数案がある場合はユーザーに確認
-4. 修正実施後、必ず動作確認
-5. 再発防止策を検討
-6. 必要に応じてドキュメントを更新
-
-### エスカレーション
-以下の場合はユーザーに報告し、判断を仰ぐ：
-- 要件や設計の変更が必要な場合
-- 技術的に実現困難な要件がある場合
-- セキュリティ上のリスクがある場合
-- 大幅な工数増加が見込まれる場合
-- 永続的ドキュメントの大幅な変更が必要な場合
-
-## バージョン管理
-
-### Gitの使用
-- **コミットタイミング**: 各機能の実装完了時、ドキュメント更新時
-- **コミットメッセージ**: 変更内容を明確に記述（例：`feat: ユーザー認証機能を追加`）
-- **ブランチ戦略**: プロジェクトに応じて適切な戦略を採用
-- **プルリクエスト**: 大きな変更は PR 経由でレビュー
-- **履歴の保持**: ステアリングディレクトリは削除せず履歴として保持
-
-## 重要なリマインダー
-
-### 各ドキュメント完成後に必ず承認を取得
-- ドキュメントを作成したら、次に進む前に必ずユーザーの承認を待つ
-- 承認なしに次のステップに進まない
-- 修正が必要な場合は、修正後に再度承認を取得
-
-### ステアリングディレクトリの命名
-- 明確な命名: 日付 + 説明的なタイトル（例：`docs/steering/20251128-user-authentication/`）
-- 日付形式: `YYYYMMDD` を使用
-- タイトル: ケバブケース（小文字、ハイフン区切り）を推奨
-
-### ドキュメントの区別
-- **永続的ドキュメント**: プロジェクトの基盤となる仕様、めったに変更しない
-- **ステアリングドキュメント**: 特定タスクの一時的な作業指示、タスク完了後も履歴として保持
-
-### 図表の保守性
-- Mermaid記法を使用して、メンテナンスのオーバーヘッドを最小化
-- 複雑な図が必要な場合のみ画像ファイルを使用
-- 設計変更時は対応する図表も必ず更新
-
-### セキュリティとコーディング規約
-- 一貫したセキュリティ基準とコーディング規約を全体に適用
-- `docs/persistent/development-guidelines.md` を参照
-- レビュー時に必ずセキュリティチェックを実施
-
-## まとめ
-
-このガイドラインに従うことで：
-- ✅ 計画的で段階的な開発が可能
-- ✅ ドキュメントとコードの整合性を維持
-- ✅ 品質の高いコードが維持できる
-- ✅ ユーザーとの認識齟齬を防止できる
-- ✅ 問題の早期発見と対応が可能
-- ✅ プロジェクトの履歴を明確に追跡可能
+**Canvas Drawing Through Renderer**
+```typescript
+this.renderer.drawCircle(position, radius, color);
+// Not: ctx.arc(...) directly
+```
 
 ---
 
-**最終更新**: 2025-11-28
-**バージョン**: 2.1
+**Last Updated**: 2025-11-28
+**Version**: 3.0 (TDD-focused rewrite)

@@ -15,6 +15,10 @@ export default defineConfig({
       '@types': path.resolve(__dirname, './src/types'),
     },
   },
+  server: {
+    host: true, // AWS Cloud9などのクラウド環境でのアクセスを許可
+    strictPort: false,
+  },
   test: {
     globals: true,
     environment: 'jsdom',
